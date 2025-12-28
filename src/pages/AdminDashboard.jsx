@@ -7,8 +7,14 @@
         const [categories, setCategories] = useState([]);
         const [showForumForm, setShowForumForm] = useState(false);
         const [showCategoryForm, setShowCategoryForm] = useState(false);
-        const [newForum, setNewForum] = useState({ title: '', description: '' , userId: localStorage.getItem('userId')    });
+        const [newForum, setNewForum] = useState({ title: '', description: '' , userId: Number(localStorage.getItem('userId'))    });
         const [newCategory, setNewCategory] = useState({ name: '', description: '' });
+        const normalizeArray = (res) => {
+            if (Array.isArray(res)) return res;
+            if (res?.content && Array.isArray(res.content)) return res.content;
+            if (res?.data && Array.isArray(res.data)) return res.data;
+            return [];
+        };
 
         useEffect(() => {
             fetchData();
@@ -20,19 +26,20 @@
                     forumService.getAll(),
                     categoryService.getAll()
                 ]);
-                setForums(fData);
-                setCategories(cData);
-                console.log(forums);
+
+                setForums(normalizeArray(fData));
+                setCategories(normalizeArray(cData));
             } catch (error) {
                 console.error('Error fetching admin data:', error);
             }
         };
 
+
         const handleCreateForum = async (e) => {
             e.preventDefault();
             try {
                 await forumService.create(newForum);
-                setNewForum({ title: '', description: '' });
+                setNewForum({ title: '', description: ''  , userId: Number(localStorage.getItem('userId'))});
                 setShowForumForm(false);
                 fetchData();
             } catch (error) {
@@ -44,7 +51,7 @@
             e.preventDefault();
             try {
                 await categoryService.create(newCategory);
-                setNewCategory({ name: '', description: '' });
+                setNewCategory({ name: '', description: '' } );
                 setShowCategoryForm(false);
                 fetchData();
             } catch (error) {
@@ -199,7 +206,7 @@
                         )}
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            {categories.map(c => (
+                            {Array.isArray(categories) && categories.map(c => (
                                 <div key={c.id} className="group relative p-6 bg-gray-50 rounded-3xl border-2 border-transparent hover:border-indigo-500 transition-all">
                                     <h3 className="font-black text-gray-900">{c.name}</h3>
                                     <p className="text-xs text-gray-500 font-bold uppercase mb-4 tracking-tighter">{c.blogCount || 0} BLOGS</p>

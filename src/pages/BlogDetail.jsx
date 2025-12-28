@@ -19,18 +19,24 @@ const BlogDetail = () => {
 
     const fetchBlogData = async () => {
         try {
-            const [blogData, commentsData] = await Promise.all([
-                blogService.getById(id),
-                commentService.getByBlogId(id)
-            ]);
+            const blogData = await blogService.getById(id);
             setBlog(blogData);
-            setComments(commentsData);
         } catch (error) {
-            console.error('Error fetching blog details:', error);
+            console.error('Error fetching blog:', error);
+            setBlog(null);
+        }
+
+        try {
+            const commentsData = await commentService.getByBlogId(id);
+            setComments(Array.isArray(commentsData) ? commentsData : []);
+        } catch (error) {
+            console.error('Error fetching comments:', error);
+            setComments([]);
         } finally {
             setLoading(false);
         }
     };
+
 
     const handleCommentSubmit = async (e) => {
         e.preventDefault();

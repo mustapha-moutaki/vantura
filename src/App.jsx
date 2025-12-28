@@ -8,6 +8,7 @@ import Register from './pages/Register';
 import Forums from './pages/Forums';
 import Blogs from './pages/Blogs';
 import BlogDetail from './pages/BlogDetail';
+import ForumDetail from './pages/ForumDetail';
 
 // Protected Route Component
 const ProtectedRoute = ({ children, allowedRoles }) => {
@@ -72,6 +73,16 @@ function App() {
                 </ProtectedRoute>
               }
             />
+
+            <Route 
+            path="/forums/:id"
+            element={
+            <ProtectedRoute allowedRoles={['user', 'admin']}>
+              <ForumDetail />
+            </ProtectedRoute>
+            } 
+            />
+
 
             <Route
               path="/blog/:id"

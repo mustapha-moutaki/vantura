@@ -4,14 +4,14 @@ import forumService from '../api/forumService';
 import categoryService from '../api/categoryService';
 import { useAuth } from '../context/AuthContext';
 
-const CreateBlogModal = ({ isOpen, onClose, onBlogCreated }) => {
+const CreateBlogModal = ({ isOpen, onClose, onBlogCreated, preselectedForumId }) => {
     const { user } = useAuth();
     const [forums, setForums] = useState([]);
     const [categories, setCategories] = useState([]);
     const [formData, setFormData] = useState({
         title: '',
         content: '',
-        forumId: '',
+        forumId: preselectedForumId || '',
         categoryId: ''
     });
     const [submitting, setSubmitting] = useState(false);
@@ -28,8 +28,15 @@ const CreateBlogModal = ({ isOpen, onClose, onBlogCreated }) => {
                 forumService.getAll(),
                 categoryService.getAll()
             ]);
-            setForums(fData);
-            setCategories(cData);
+            const normalizeArray = (res) => {
+                if (Array.isArray(res)) return res;
+                if (res?.content && Array.isArray(res.content)) return res.content;
+                if (res?.data && Array.isArray(res.data)) return res.data;
+                return [];
+            };
+
+            setForums(normalizeArray(fData));
+            setCategories(normalizeArray(cData));
         } catch (error) {
             console.error('Error fetching options:', error);
         }
@@ -58,8 +65,9 @@ const CreateBlogModal = ({ isOpen, onClose, onBlogCreated }) => {
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-            <div className="relative bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl overflow-hidden border border-gray-100">
-                <div className="p-10">
+            <div className="relative bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl border border-gray-100
+                max-h-[90vh] flex flex-col">
+                <div className="p-10 overflow-y-auto">
                     <div className="flex justify-between items-center mb-10">
                         <h2 className="text-4xl font-black text-gray-900 tracking-tighter">Draft a Story</h2>
                         <button onClick={onClose} className="text-gray-400 hover:text-gray-900 transition-colors text-3xl font-black">×</button>
@@ -87,7 +95,7 @@ const CreateBlogModal = ({ isOpen, onClose, onBlogCreated }) => {
                                     className="w-full p-4 bg-gray-50 rounded-xl border-none focus:ring-4 focus:ring-indigo-100 font-bold text-gray-700 outline-none appearance-none"
                                 >
                                     <option value="">Select Destination</option>
-                                    {forums.map(f => <option key={f.id} value={f.id}>{f.title}</option>)}
+                                    {Array.isArray(forums) &&forums.map(f => <option key={f.id} value={f.id}>{f.title}</option>)}
                                 </select>
                             </div>
                             <div>
@@ -99,7 +107,7 @@ const CreateBlogModal = ({ isOpen, onClose, onBlogCreated }) => {
                                     className="w-full p-4 bg-gray-50 rounded-xl border-none focus:ring-4 focus:ring-indigo-100 font-bold text-gray-700 outline-none appearance-none"
                                 >
                                     <option value="">Select Genre</option>
-                                    {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                                    {Array.isArray(categories) && categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                                 </select>
                             </div>
                         </div>

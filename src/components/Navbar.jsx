@@ -46,6 +46,15 @@ const Navbar = () => {
                                     </Link>
                                 </>
                             )}
+
+                            {isAdmin && (
+                                    <Link
+                                        to="/admin"
+                                        className="text-gray-500 hover:text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 border-transparent hover:border-indigo-500 text-sm font-semibold transition-all"
+                                    >
+                                        Dashboard
+                                    </Link>
+                            )}
                         </div>
                     </div>
                     <div className="flex items-center space-x-4">

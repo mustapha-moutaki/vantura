@@ -9,6 +9,12 @@ const blogService = {
         const response = await apiClient.get(`/blogs/${id}`);
         return response.data;
     },
+
+    getByForumId: async (forumId) => {
+        const response = await apiClient.get(`/blogs/forum/${forumId}`);
+        return response.data;
+    },
+
     create: async (blogData) => {
         // blogData: { title, content, userId, forumId, categoryId }
         const response = await apiClient.post('/blogs', blogData);

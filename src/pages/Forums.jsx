@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import forumService from '../api/forumService';
 import { useAuth } from '../context/AuthContext';
+import { Link } from 'react-router-dom';
 
 const Forums = () => {
     const [forums, setForums] = useState([]);
@@ -101,9 +102,12 @@ const Forums = () => {
                                         <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Members</span>
                                     </div>
                                 </div>
-                                <button className="text-indigo-600 font-black hover:text-indigo-800 transition-colors uppercase tracking-widest text-sm underline decoration-2 underline-offset-8">
+                                <Link 
+                                    to={`/forums/${forum.id}`} 
+                                    className="text-indigo-600 font-black hover:text-indigo-800 transition-colors uppercase tracking-widest text-sm underline decoration-2 underline-offset-8"
+                                >
                                     Enter Forum
-                                </button>
+                                </Link>
                             </div>
                         </div>
                     ))}
